@@ -1,33 +1,50 @@
-version: '3'
+version: '3.8'
 
 services:
-  frontend:
-    build: ../packages/frontend
+  backend:
+    build:
+      context: ./docker/dev
+      dockerfile: Dockerfile
+    container_name: backend-dev
     ports:
-      - "3000:3000"
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public  # Local database connection
+    volumes:
+      - ./packages/backend:/app
+      - /app/node_modules  # Mount the node_modules directory globally
+    depends_on:
+      - postgres
+    command: ["yarn", "workspace", "@scope/backend", "dev"]
+
+  frontend:
+    build:
+      context: ./docker/dev
+      dockerfile: Dockerfile
+    container_name: frontend-dev
+    ports:
+      - "5173:5173" # Assuming the dev server is running on this port
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./packages/frontend:/app
+      - /app/node_modules  # Mount node_modules globally
     depends_on:
       - backend
-    volumes:
-      - ../node_modules:/app/node_modules
-      - ../packages/frontend:/app
-    env_file:
-      - .env.dev
+    command: ["yarn", "workspace", "@scope/frontend", "dev"]
 
-  backend:
-    build: ../packages/backend
-    ports:
-      - "3001:3001"
-    depends_on:
-      - db
-    volumes:
-      - ../node_modules:/app/node_modules
-      - ../packages/backend:/app
-    env_file:
-      - .env.dev
-
-  db:
-    image: postgres:latest
+  postgres:
+    image: postgres:13
+    container_name: postgres-dev
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydb
     ports:
       - "5432:5432"
-    env_file:
-      - .env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

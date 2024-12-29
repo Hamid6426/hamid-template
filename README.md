@@ -169,3 +169,41 @@ To deploy the frontend (React) app on Vercel, follow the Vercel deployment docum
 2. Docker:
 
 You can deploy the Docker containers to your preferred cloud service (AWS, Azure, GCP, etc.) using the appropriate Docker Compose or Docker CLI commands.
+
+## The Package.json View
+
+{
+  "name": "hamid-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start:frontend": "yarn workspace @scope/frontend dev",
+    "start:backend": "yarn workspace @scope/backend dev",
+    "build:frontend": "yarn workspace @scope/frontend build",
+    "copy:frontend": "cp -r packages/frontend/dist/* public/",
+    "build": "yarn build:frontend && yarn copy:frontend",
+    "start": "concurrently \"yarn workspace @scope/backend dev\" \"yarn workspace @scope/frontend dev\""
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "@prisma/adapter-neon": "^6.1.0",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "tailwindcss": "^3.4.17",
+    /* OTHER PACKAGES */
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/react": "^19.0.2",   
+    "concurrently": "^7.0.0",
+    /* OTHER PACKAGES */
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

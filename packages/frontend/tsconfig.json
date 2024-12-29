@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"]
   }
 }

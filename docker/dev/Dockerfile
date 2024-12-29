@@ -1,30 +1,21 @@
-# Frontend
-FROM node:20 as frontend
+# Base image for node.js
+FROM node:20
 
+# Set the working directory
 WORKDIR /app
 
-COPY packages/frontend/package*.json ./
+# Install dependencies for the project
+COPY package.json yarn.lock ./
 
-RUN yarn install
+# Install all dependencies for this monorepo (both frontend and backend)
+RUN yarn install --frozen-lockfile
 
-COPY packages/frontend/. .
+# Copy the application code
+COPY . .
 
-EXPOSE 3000
+# Expose port for backend and frontend
+EXPOSE 5000
+EXPOSE 5173
 
-CMD ["yarn", "start"]
-
-
-# Backend
-FROM node:20 as backend
-
-WORKDIR /app
-
-COPY packages/backend/package*.json ./
-
-RUN yarn install
-
-COPY packages/backend/. .
-
-EXPOSE 3001
-
+# Start development servers
 CMD ["yarn", "start"]

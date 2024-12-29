@@ -1,30 +1,24 @@
-# Frontend
-FROM node:20 as frontend
+# Base image for node.js
+FROM node:20
 
+# Set the working directory
 WORKDIR /app
 
-COPY packages/frontend/package*.json ./
+# Install dependencies for the project
+COPY package.json yarn.lock ./
 
-RUN yarn install --production
+# Production dependencies only
+RUN yarn install --production --frozen-lockfile
 
-COPY packages/frontend/. .
+# Copy the application code
+COPY . .
 
+# Build frontend for production 
+RUN yarn workspace @scope/frontend build
+
+# Expose ports for backend and frontend
+EXPOSE 443
 EXPOSE 80
 
-CMD ["yarn", "start"]
-
-
-# Backend
-FROM node:20 as backend
-
-WORKDIR /app
-
-COPY packages/backend/package*.json ./
-
-RUN yarn install --production
-
-COPY packages/backend/. .
-
-EXPOSE 443
-
-CMD ["yarn", "start"]
+# Start backend server
+CMD ["yarn", "workspace", "@scope/backend", "start"]

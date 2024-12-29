@@ -3,23 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
   "dev": "vite",
   "build": "vite build",
   "serve": "vite serve"
-},
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tailwindcss": "^3.4.17",
-    "postcss": "^8.4.49",
-    "gsap": "^3.12.5",
-    "pdfkit": "^0.15.2"
-  },
-  "devDependencies": {
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
-    "@vitejs/plugin-react-swc": "^3.7.2",
-    "vite": "^6.0.5"
-  }
+}
 }
