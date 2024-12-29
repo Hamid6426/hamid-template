@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  frontend:
+    extends:
+      file: dev/docker-compose.dev.yml
+      service: frontend
+
+  backend:
+    extends:
+      file: dev/docker-compose.dev.yml
+      service: backend
+
+  db:
+    extends:
+      file: dev/docker-compose.dev.yml
+      service: db

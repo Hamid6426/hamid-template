@@ -9,10 +9,10 @@
   ],
   "scripts": {
     "start:frontend": "yarn workspace @scope/frontend dev",
+    "start:backend": "yarn workspace @scope/backend dev",
     "build:frontend": "yarn workspace @scope/frontend build",
     "copy:frontend": "cp -r packages/frontend/dist/* public/",
     "build": "yarn build:frontend && yarn copy:frontend",
-    "start:backend": "yarn workspace @scope/backend dev",
     "start": "concurrently \"yarn workspace @scope/backend dev\" \"yarn workspace @scope/frontend dev\""
   },
   "dependencies": {

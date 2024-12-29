@@ -8,6 +8,14 @@
 // 
 // npx prisma migrate dev --name init
 
+// database/prisma/schema.prisma
+// const env = require('../config/env');
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env.DATABASE_URL
+// }
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
