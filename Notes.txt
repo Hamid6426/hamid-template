@@ -223,3 +223,178 @@ Above is my project review
 There is only 1 node_module folder so no need to install dependecies anywhere else
 Can you setup docker/prod and docker/dev files for me 
 I have wsl2 and ubuntu installed when setting up the docker on my windows
+
+
+
+---
+
+For a Yarn workspace with a shared node_modules folder at the root and a single port setup, we can enhance the Docker and docker-compose setup while considering concurrency (running both frontend and backend together).
+
+Here’s a refined approach:
+
+Folder Structure
+bash
+Copy code
+project/
+│
+├── docker/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+├── .dockerignore
+├── backend/       # Express.js, Prisma
+├── frontend/      # Vite + React
+├── node_modules/  # Shared dependencies (via Yarn workspace)
+└── package.json   # Root package.json managing both frontend and backend
+1. Dockerfile (Single File for Mono Repo) (docker/Dockerfile)
+dockerfile
+Copy code
+# Base image
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy the root package.json and yarn.lock
+COPY package.json yarn.lock ./
+
+# Install dependencies for all workspaces
+RUN yarn install
+
+# Copy the entire workspace
+COPY . .
+
+# Build both frontend and backend
+RUN yarn workspaces run build
+
+# Expose the application port
+EXPOSE 3000
+
+# Run both backend and frontend concurrently
+CMD ["yarn", "workspace", "backend", "start:prod"]
+2. docker-compose.yml
+yaml
+Copy code
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000" # Single port for frontend/backend
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/mydatabase
+    volumes:
+      - ..:/app
+      - /app/node_modules
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+3. Backend Package Scripts (backend/package.json)
+Update the scripts section for workspace compatibility.
+
+json
+Copy code
+{
+  "scripts": {
+    "build": "tsc",
+    "start:prod": "node dist/index.js",
+    "dev": "ts-node-dev --respawn src/index.ts"
+  }
+}
+4. Frontend Package Scripts (frontend/package.json)
+Add a proxy for the backend and update the scripts.
+
+json
+Copy code
+{
+  "scripts": {
+    "build": "vite build",
+    "start:prod": "vite preview",
+    "dev": "vite --port 3000"
+  }
+}
+5. Root Package Scripts (package.json)
+Use concurrently for development.
+
+json
+Copy code
+{
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace backend dev\" \"yarn workspace frontend dev\"",
+    "build": "yarn workspaces run build"
+  }
+}
+6. .dockerignore
+plaintext
+Copy code
+node_modules
+dist
+build
+.env
+.DS_Store
+How It Works
+Shared Dependencies:
+
+yarn install installs dependencies in a single node_modules directory at the root.
+Both workspaces (frontend and backend) share this directory.
+Single Port Setup:
+
+Frontend serves the static files and proxies API requests to the backend on the same port.
+Concurrent Development:
+
+Use concurrently to run both frontend and backend during development (yarn dev).
+Production:
+
+yarn workspaces run build builds both workspaces.
+The backend serves API requests and static files (from frontend/dist).
+Commands
+Development:
+
+bash
+Copy code
+docker-compose up --build
+Access:
+
+App (Frontend + Backend): http://localhost:3000
+Stop Containers:
+
+bash
+Copy code
+docker-compose down
+Notes
+Adjust the proxy settings in the frontend's vite.config.ts to forward requests to the backend.
+The backend serves frontend/dist in production. Update the backend logic to handle this. For example:
+Express serving static files:
+
+ts
+Copy code
+import path from "path";
+import express from "express";
+
+const app = express();
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// Handle all other routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+This setup efficiently handles your Yarn workspace and ensures a single node_modules directory is used across containers.
