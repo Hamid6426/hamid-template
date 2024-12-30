@@ -265,7 +265,7 @@ docker push <your-docker-hub-username>/hamid-template
 - That's it! Your Docker container should now be hosted on Vercel.
 
 ## Package.json view
-
+```
 {
   "name": "hamid-template",
   "version": "1.0.0",
@@ -302,3 +302,4 @@ docker push <your-docker-hub-username>/hamid-template
     "node": ">=16.0.0"
   }
 }
+```
