@@ -398,3 +398,49 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 This setup efficiently handles your Yarn workspace and ensures a single node_modules directory is used across containers.
+
+
+---
+
+
+DOCKER
+
+Lauch WSL from start menu
+Lauch Ubuntu from start menu
+Launch Docker
+
+cd /mnt/c/Users/mianh/Desktop/hamid-template
+docker-compose up
+
+WARN[0000] /mnt/c/Users/mianh/Desktop/hamid-template/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+
+So there is no need to use this line in dockercompose.yml
+version: '3'
+
+After installing first and then want to update the containers with changes
+- Stop the containers: Run docker-compose stop to stop the running containers.
+- Rebuild the images: Run docker-compose build to rebuild the images with your updated code and configuration.
+- Restart the containers: Run docker-compose up again to restart the containers with the updated images.
+
+ => => writing image sha256:e7a4967454987b07a5c174c4ff17df15edb5ba682d23e7b99ddede9429fd87e2                                                   0.0s
+[+] Running 4/4o docker.io/library/hamid-template-backend                                                                                      0.0s
+ ✔ Service backend                     Built                                                                                                 650.5s
+ ✔ Network hamid-template_default      Created                                                                                                 0.1s
+ ✔ Container hamid-template-db-1       Created                                                                                                 0.2s
+ ✔ Container hamid-template-backend-1  Created                                                                                                 0.9s
+Attaching to backend-1, db-1
+db-1       | Error: Database is uninitialized and superuser password is not specified.
+db-1       |        You must specify POSTGRES_PASSWORD to a non-empty value for the
+db-1       |        superuser. For example, "-e POSTGRES_PASSWORD=password" on "docker run".
+db-1       |
+db-1       |        You may also use "POSTGRES_HOST_AUTH_METHOD=trust" to allow all
+db-1       |        connections without a password. This is *not* recommended.
+db-1       |
+db-1       |        See PostgreSQL documentation about "trust":
+db-1       |        https://www.postgresql.org/docs/current/auth-trust.html
+db-1 exited with code 1
+backend-1  | yarn workspace v1.22.22
+backend-1  | yarn run v1.22.22
+backend-1  | $ ts-node-dev --respawn src/index.ts
+backend-1  | [INFO] 05:24:46 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.7.2)
+backend-1  | Server is running on http://localhost:3000
