@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "packages/backend/build/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/packages/backend/build/index.js"
+    }
+  ],
+  "env": {
+    "PORT": "3000",
+    "DB_HOST": "localhost",
+    "DB_PORT": "5432",
+    "DB_USERNAME": "myuser",
+    "DB_PASSWORD": "mypassword",
+    "DB_NAME": "mydb",
+    "API_URL": "http://localhost:3000/api",
+    "DATABASE_URL": "postgres://myuser:mypassword@localhost:5432/mydb",
+    "NEON_DATABASE_URL": "postgres://<user>:<password>@<neon_host>:<port>/<dbname>?schema=public",
+    "NEON_API_URL": "your_dev_neon_api_url"
+  }
+}

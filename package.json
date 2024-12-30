@@ -10,9 +10,12 @@
   ],
   "scripts": {
     "start:frontend": "yarn workspace @scope/frontend dev",
-    "install-dotenv": "yarn workspace @scope/backend add dotenv",
     "start:backend": "yarn workspace @scope/backend dev",
-    "build": "yarn workspace @scope/frontend build --outDir=../backend/src/public",
+    "build:frontend": "yarn workspace @scope/frontend build",
+    "build:backend": "yarn workspace @scope/backend build",
+    "db:init": "yarn workspace @scope/backend db:init",
+    "db:migrate": "yarn workspace @scope/backend db:migrate",
+    "db:seed": "yarn workspace @scope/backend db:seed",
     "start": "concurrently \"yarn workspace @scope/backend dev\" \"yarn workspace @scope/frontend dev\""
   },
   "dependencies": {
@@ -24,6 +27,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "dotenv-flow": "^4.1.0",
     "express": "^4.21.2",
     "gsap": "^3.12.5",
     "pdfkit": "^0.15.2",
