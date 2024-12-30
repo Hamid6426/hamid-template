@@ -1,49 +1,169 @@
 # Hamid Template
 
-A monorepo project using Yarn Workspaces, Docker, and Prisma with Neon for full-stack development (frontend, backend, database, and shared utilities).
+A monorepo project using Yarn Workspaces, Docker, and Prisma with Neon for full-stack development (frontend & backend).
 
-## Project Structure
+## Overview
+- This setup utilizes Yarn Workspaces to manage a monorepo with separate packages for frontend, backend. 
+- Docker is used for containerization, ensuring consistent development.
+
+## Key Features
+- Yarn Workspaces enables a single node_modules folder for all dependencies.
+- Separate packages for frontend, backend code promote modularity and reusability.
+
+## Benefits
+- Simplified dependency management with Yarn Workspaces.
+- Consistent environments across development using Docker avoiding run of my machine issue.
+- Improved modularity and reusability with separate packages for frontend, backend.
+
+## Why this setup
+- I am learning docker container
+- I want to host it as a single repo.
+- I want to learn postgresql(neon) and deployment on vercel
+
+## Projects Structure
 
 ```
-├── docker/                       # Docker-related files
-│   ├── .dockerignore             # Files to exclude from Docker builds
-│   ├── .env.dev                  # Environment variables for development
-│   ├── .env.prod                 # Environment variables for production
-│   ├── .env.staging              # Environment variables for staging
-│   ├── compose.yml               # Main docker-compose configuration
-│   ├── dev/                      # Development environment configurations
-│   │   ├── docker-compose.dev.yml
-│   │   └── Dockerfile
-│   ├── prod/                     # Production environment configurations
-│   │   ├── docker-compose.prod.yml
-│   │   └── Dockerfile
-│   └── staging/                  # Staging environment configurations
-│       ├── docker-compose.staging.yml
-│       └── Dockerfile
-├── packages/                     # Code for frontend, backend, shared, and database
-│   ├── frontend/                 # React app
-│   ├── backend/                  # Express server
-│   ├── database/                 # Prisma setup
-│   └── shared/                   # Shared utilities and types
+root/
+├── node_modules/                 # Shared dependencies (via Yarn workspace)
+├── packages/                     # package all the directories
+│   ├── backend/                  # Express server (3000)
+│   |   ├── prisma/               # Prisma setting up PostgreSQL (Neon)
+│   |   ├── src/                  # All backend files (Typescript)
+│   |   |   ├── controllers/      # Controllers
+│   |   |   ├── public/           # Public folder for vite build files
+│   |   |   ├── routes/           # Routes
+│   |   |   ├── index.tsx         # Server starter file
+│   |   ├── package.json          # @scope/backend
+│   |   ├── tsconfig.json         # typescript sconfiguration file
+│   ├── frontend/                 # Vite-React (5173)
+│   |   ├── node_modules/         # Temporarily created when running vite
+│   |   ├── public/               # Easily accessible media folder
+│   |   ├── src/                  # All source files of frontend
+│   |   |   ├── api/              # APIs
+│   |   |   ├── components/       # Componenets
+│   |   |   ├── context/          # Context
+│   |   |   ├── pages/            # Pages
+│   |   |   ├── routes/           # React-Routes
+│   |   |   ├── styles/           # Styling files
+│   |   |   ├── utils/            # Reusable functions
+│   |   |   ├── main.tsx          # Server starter file
+│   |   |   ├── vite-env.d.ts     # Type reference file
+│   |   ├── index.html            # @scope/frontend
+│   |   ├── package.json          # @scope/frontend
+│   |   ├── tsconfig.json         # typescript sconfiguration file
+│   |   ├── postcss.config.js     # postcss sconfiguration file
+│   |   ├── tailwind.config.js    # Tailwind sconfiguration file
+│   |   ├── vite.config.js        # vite configuration file
+│── .dockerignore                  # Files to exclude from Docker builds
+├── .env                          # All env variables file
+├── .env.example                  # All env variables example file
+├── .gitignore                    # ignore to exclude from git
+├── docker-compose.yml            # Docker-compose configuration
+├── Dockerfile                    # Dockerfile
 ├── yarn.lock                     # Yarn lock file for dependency management
 ├── package.json                  # Root package.json for monorepo
-└── README.md                     # This file
+├── vercel.json                   # configuration for vercel deployment
+├── README.md                     # Provide details of repo
+
 ```
+
+---
 
 ##  Prerequisites
 
-- Node.js (>= 20.0.0)
-- Yarn (for managing packages and running scripts)
-- Docker (for containerization and consistent environments)
-- Docker Compose (to manage multi-container Docker applications)
+### 1. Node.js (>= 16.0.0)
+```
+winget install OpenJS.NodeJS
+node -v
+```
 
-## Installation
+### 2. Yarn
+```
+npm install -g yarn
+yarn -v
+```
+
+### 3. Docker
+```
+winget install Docker.DockerDesktop
+docker -v 
+```
+It may not pass in the first try so...
+
+### 4. Docker Setup
+
+- Turn on virtualization in BIOS
+- Enable Hyper-V and Containers in windows
+```
+dism.exe /online /enable-feature /featurename:Microsoft-Hyper-V -All /featurename:Containers
+```
+- Enable WSL2
+```
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+```
+- Set WSL as default
+```
+wsl --set-default-version 2
+```
+
+- Restart PC
+- Docker -v
+
+### 5. Install Image(commonly ubuntu)
+
+- Pull a Docker image (e.g., Ubuntu):
+```
+docker pull ubuntu
+```
+
+- Run the Docker image to test:
+```
+docker run -it ubuntu
+```
+
+### 6. WSL2 + DOCKER
+
+- Install the Docker WSL2 backend:
+```
+sudo apt update
+sudo apt install docker.io
+```
+- Configure Docker to use the WSL2 backend:
+```
+docker context create wsl
+docker context use wsl
+```
+
+### Alternatively
+
+```
+cd /mnt/path/to/project/hamid-template
+docker-compose up
+```
+
+### UPDATING
+
+After installing first and then want to update the containers with changes
+- Stop the containers: Run docker-compose stop to stop the running containers.
+- Rebuild the images: Run docker-compose build to rebuild the images with your updated code and configuration.
+- Restart the containers: Run docker-compose up again to restart the containers with the updated images.
+
+### KEEP IN MIND
+
+Do this if the docker is not running.
+
+- Lauch WSL from start menu
+- Lauch Ubuntu from start menu
+- Launch Docker from start menu
+
+
+## Template Installation
 
 ### Step 1: Clone the repository
 Clone this repository to your local machine:
 ```
 git clone https://github.com/Hamid6426/hamid-template
-cd cd hamid-template
+cd hamid-template
 ```
 
 ### Step 2: Install dependencies
@@ -53,36 +173,12 @@ yarn install
 ```
 
 ### Step 3: Set up environment variables
-You will need to configure environment variables for each environment (development, staging, production).
+You will need to configure environment variables in the global .env.
 
-1. Development: Create .env.dev file in the root directory, or copy the template from .env.dev.sample.
-#### .env.dev
+### Step 4: Running Docker
+Use the following Docker Compose command to start the development containers:
 ```
-DATABASE_URL="your-development-database-url"
-PORT=3000
-```
-2. Staging: Similarly, create .env.staging for staging setup.
-3. Production: Create .env.prod for production.
-
-### Step 4: Docker Setup
-
-#### Docker Containers
-The docker/ directory contains environment-specific Docker configurations for development, staging, and production.
-
-1. Development: Use the following Docker Compose command to start the development containers:
-```
-docker-compose -f docker/compose.yml -f docker/dev/docker-compose.dev.yml up
-```
-This will use docker-compose.dev.yml to run the development environment.
-
-2. Staging: To start the staging environment:
-```
-docker-compose -f docker/compose.yml -f docker/staging/docker-compose.staging.yml up
-```
-
-3. Production: For the production setup:
-```
-docker-compose -f docker/compose.yml -f docker/prod/docker-compose.prod.yml up
+docker compose up
 ```
 
 ### Step 5: Running the Project
@@ -105,72 +201,70 @@ yarn start:backend
 ```
 
 ### Step 6: Build the Frontend
-To build the frontend code and copy it to the public directory, use:
+- To build the frontend code which will also move it to the public directory.
+- After frontend, we need to build the backend code which compile ts to js in the dist folder
 ```
-yarn build
+build:frontend
+build:backend
 ```
 
 ### Step 7: Database Setup (Prisma)
 
-1. Migrations: Run Prisma migrations to set up your database schema.
+1. Init: Run the prisma
 ```
-yarn workspace @scope/database prisma migrate dev
-```
-2. Seed Database (if necessary):
-```
-yarn workspace @scope/database prisma db seed
+yarn db:init
 ```
 
-## Docker Compose Configuration
-
-The `docker-compose.yml` file serves as the base file, and each environment-specific configuration (`dev`, `staging`, `prod`) extends the base one. This modular setup allows for different services, databases, or configurations per environment.
-
-## Scripts
-Here are some useful Yarn scripts to run during development:
-
-- Start both frontend and backend:
+2. Migrations: Run Prisma migrations to set up your database schema.
 ```
-yarn start
+yarn db:migrate
 ```
 
-- Start frontend:
+3. Seed Database (if necessary, seeding actually mean adding dummy data):
 ```
-yarn start:frontend
-```
-
-- Start backend:
-```
-yarn start:backend
-```
-
-- Build the frontend:
-```
-yarn build:frontend
-```
-
-- Copy the built frontend code:
-```
-yarn copy:frontend
+yarn db:seed
 ```
 
 ## Testing
+
+Nothing is added at the moment so...
 Add your tests (unit, integration, etc.) and run them with:
 ```
 yarn test
 ```
 For more advanced configurations, you can integrate with CI/CD pipelines.
 
-## Deployment
+---
 
-1. Vercel:
+## Hosting on Vercel
 
-To deploy the frontend (React) app on Vercel, follow the Vercel deployment documentation for configuring a monorepo setup.
+Vercel is a platform for hosting web applications, and it supports Docker containers. However, Vercel has some specific requirements for Docker containers:
 
-2. Docker:
+- The container must expose port 80 (HTTP) or 443 (HTTPS).
+- The container must be built from a public Docker Hub repository or a private repository with Vercel's Docker Hub integration.
 
-You can deploy the Docker containers to your preferred cloud service (AWS, Azure, GCP, etc.) using the appropriate Docker Compose or Docker CLI commands.
+To host your Docker container on Vercel, follow these steps:
 
-## The Package.json View
+### Step 1: Push the Docker image to Docker Hub
+- Create a Docker Hub account, create a new repository, and push your Docker image to it:
+```
+docker tag hamid-template <your-docker-hub-username>/hamid-template
+docker push <your-docker-hub-username>/hamid-template
+```
+
+### Step 2: Create a new Vercel project
+- Create a new Vercel project and link it to your Docker Hub repository.
+
+### Step 3: Configure the Vercel project
+- Configure the Vercel project to use the Docker container:
+- Set the "Build and Development Settings" to "Docker".
+- Set the "Docker Image" to your Docker Hub repository.
+
+### Step 4: Deploy the Vercel project
+- Deploy the Vercel project to production.
+- That's it! Your Docker container should now be hosted on Vercel.
+
+## Package.json view
 
 {
   "name": "hamid-template",
@@ -178,6 +272,7 @@ You can deploy the Docker containers to your preferred cloud service (AWS, Azure
   "main": "index.js",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
@@ -185,25 +280,25 @@ You can deploy the Docker containers to your preferred cloud service (AWS, Azure
     "start:frontend": "yarn workspace @scope/frontend dev",
     "start:backend": "yarn workspace @scope/backend dev",
     "build:frontend": "yarn workspace @scope/frontend build",
-    "copy:frontend": "cp -r packages/frontend/dist/* public/",
-    "build": "yarn build:frontend && yarn copy:frontend",
+    "build:backend": "yarn workspace @scope/backend build",
+    "db:init": "yarn workspace @scope/backend db:init",
+    "db:migrate": "yarn workspace @scope/backend db:migrate",
+    "db:seed": "yarn workspace @scope/backend db:seed",
     "start": "concurrently \"yarn workspace @scope/backend dev\" \"yarn workspace @scope/frontend dev\""
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "@prisma/adapter-neon": "^6.1.0",
-    "express": "^4.21.2",
-    "pg": "^8.13.1",
-    "tailwindcss": "^3.4.17",
-    /* OTHER PACKAGES */
+    "@prisma/client": "^6.1.0",
+    # Check package.json for full list
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/react": "^19.0.2",   
-    "concurrently": "^7.0.0",
-    /* OTHER PACKAGES */
+    # Check package.json for full list
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=16.0.0"
   }
 }
